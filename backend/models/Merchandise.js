@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
 const merchandiseSchema = new mongoose.Schema(
   {
@@ -26,17 +26,15 @@ const merchandiseSchema = new mongoose.Schema(
         type: String,
       },
     ],
-    sizes: [
-      {
-        type: String,
-        enum: ["XS", "S", "M", "L", "XL", "XXL"],
-      },
-    ],
-    colors: [
-      {
-        type: String,
-      },
-    ],
+    sizes: {
+      type: [String],
+      enum: ["XS", "S", "M", "L", "XL", "XXL"],
+      default: [],
+    },
+    colors: {
+      type: [String],
+      default: [],
+    },
     stock: {
       type: Number,
       required: true,
@@ -53,7 +51,7 @@ const merchandiseSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  },
-)
+  }
+);
 
-module.exports = mongoose.model("Merchandise", merchandiseSchema)
+module.exports = mongoose.model("Merchandise", merchandiseSchema);

@@ -18,9 +18,13 @@ export class CommunityComponent implements OnInit {
   selectedCategory = ""
   searchTerm = ""
   showCreatePost = false
-  createPostForm: FormGroup
+  createPostForm!: FormGroup
 
   categories = ["News", "Updates", "Community", "Events", "Guides"]
+
+  // Variables para edición
+  editingPost: Post | null = null
+  editPostForm!: FormGroup
 
   constructor(
     private postService: PostService,
@@ -38,6 +42,14 @@ export class CommunityComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadPosts()
+
+    // Inicializar formulario de edición
+    this.editPostForm = this.fb.group({
+      title: ["", [Validators.required, Validators.minLength(5)]],
+      content: ["", [Validators.required, Validators.minLength(10)]],
+      category: ["", Validators.required],
+      tags: [""],
+    })
   }
 
   loadPosts(): void {
@@ -72,24 +84,94 @@ export class CommunityComponent implements OnInit {
     this.loadPosts()
   }
 
-  createPost(): void {
-    if (this.createPostForm.valid) {
-      const postData = { ...this.createPostForm.value }
+  // Verificar si el usuario puede editar el post
+  canEditPost(post: Post): boolean {
+    const currentUser = this.getCurrentUser()
+    if (!currentUser) return false
+
+    // El autor puede editar su post, o si es admin
+    return post.author._id === currentUser._id || currentUser.role === "admin"
+  }
+
+  // Iniciar edición de post
+  editPost(post: Post): void {
+    this.editingPost = post
+    this.editPostForm.patchValue({
+      title: post.title,
+      content: post.content,
+      category: post.category,
+      tags: post.tags.join(", "),
+    })
+    this.showCreatePost = true // Reutilizar el área de creación
+  }
+
+  // Actualizar post
+  updatePost(): void {
+    if (this.editPostForm.valid && this.editingPost) {
+      const postData = { ...this.editPostForm.value }
       if (postData.tags) {
         postData.tags = postData.tags.split(",").map((tag: string) => tag.trim())
       }
 
-      this.postService.createPost(postData).subscribe({
+      this.postService.updatePost(this.editingPost._id!, postData).subscribe({
         next: (response) => {
-          this.snackBar.open("Post creado exitosamente", "Cerrar", { duration: 3000 })
-          this.showCreatePost = false
-          this.createPostForm.reset()
+          this.snackBar.open("Post actualizado exitosamente", "Cerrar", { duration: 3000 })
+          this.cancelEdit()
           this.loadPosts()
         },
         error: (error) => {
-          this.snackBar.open("Error al crear el post", "Cerrar", { duration: 3000 })
+          this.snackBar.open("Error al actualizar el post", "Cerrar", { duration: 3000 })
         },
       })
+    }
+  }
+
+  // Cancelar edición
+  cancelEdit(): void {
+    this.editingPost = null
+    this.showCreatePost = false
+    this.editPostForm.reset()
+  }
+
+  // Eliminar post
+  deletePost(postId: string): void {
+    if (confirm("¿Estás seguro de que quieres eliminar este post?")) {
+      this.postService.deletePost(postId).subscribe({
+        next: () => {
+          this.snackBar.open("Post eliminado exitosamente", "Cerrar", { duration: 3000 })
+          this.loadPosts()
+        },
+        error: (error) => {
+          this.snackBar.open("Error al eliminar el post", "Cerrar", { duration: 3000 })
+        },
+      })
+    }
+  }
+
+  // Modificar el método createPost para manejar tanto crear como actualizar
+  createPost(): void {
+    if (this.editingPost) {
+      this.updatePost()
+    } else {
+      // Código existente para crear post
+      if (this.createPostForm.valid) {
+        const postData = { ...this.createPostForm.value }
+        if (postData.tags) {
+          postData.tags = postData.tags.split(",").map((tag: string) => tag.trim())
+        }
+
+        this.postService.createPost(postData).subscribe({
+          next: (response) => {
+            this.snackBar.open("Post creado exitosamente", "Cerrar", { duration: 3000 })
+            this.showCreatePost = false
+            this.createPostForm.reset()
+            this.loadPosts()
+          },
+          error: (error) => {
+            this.snackBar.open("Error al crear el post", "Cerrar", { duration: 3000 })
+          },
+        })
+      }
     }
   }
 

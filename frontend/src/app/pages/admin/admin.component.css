@@ -325,3 +325,20 @@
   background-color: var(--danger-color);
   color: white;
 }
+.align-center {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  margin-left: 16px;
+  margin-top: 20px;
+}
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-top: 24px; /* ajusta según necesites */
+  margin-left: 16px;
+}

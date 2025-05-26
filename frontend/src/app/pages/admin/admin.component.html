@@ -12,7 +12,7 @@
       <mat-tab label="Juegos">
         <div class="tab-content">
           <div class="admin-section">
-            <h2>Crear Nuevo Juego</h2>
+            <h2>{{editingGame ? 'Editar Juego' : 'Crear Nuevo Juego'}}</h2>
             <mat-card class="form-card">
               <mat-card-content>
                 <form [formGroup]="gameForm" (ngSubmit)="createGame()" class="admin-form">
@@ -61,17 +61,16 @@
                       </mat-select>
                     </mat-form-field>
                   </div>
+<div class="form-row">
+  <mat-form-field appearance="outline" class="third-width">
+    <mat-label>Stock</mat-label>
+    <input matInput type="number" formControlName="stock">
+  </mat-form-field>
 
-                  <div class="form-row">
-                    <mat-form-field appearance="outline" class="half-width">
-                      <mat-label>Fecha de Lanzamiento</mat-label>
-                      <input matInput type="date" formControlName="releaseDate">
-                    </mat-form-field>
-
-                    <div class="checkbox-group">
-                      <mat-checkbox formControlName="featured">Destacado</mat-checkbox>
-                    </div>
-                  </div>
+  <div class="checkbox-container">
+    <mat-checkbox formControlName="featured">Destacado</mat-checkbox>
+  </div>
+</div>
 
                   <!-- File Upload Section -->
                   <div class="file-upload-section">
@@ -108,8 +107,11 @@
                   </div>
 
                   <div class="form-actions">
+                    <button mat-button type="button" *ngIf="editingGame" (click)="cancelGameEdit()">
+                      Cancelar Edición
+                    </button>
                     <button mat-raised-button color="primary" type="submit" [disabled]="gameForm.invalid">
-                      Crear Juego
+                      {{editingGame ? 'Actualizar Juego' : 'Crear Juego'}}
                     </button>
                   </div>
                 </form>
@@ -135,6 +137,9 @@
                       </div>
                     </div>
                     <div class="item-actions">
+                      <button mat-icon-button color="primary" (click)="editGame(game)">
+                        <mat-icon>edit</mat-icon>
+                      </button>
                       <button mat-icon-button color="warn" (click)="deleteGame(game._id)">
                         <mat-icon>delete</mat-icon>
                       </button>
@@ -151,7 +156,7 @@
       <mat-tab label="Mercancía">
         <div class="tab-content">
           <div class="admin-section">
-            <h2>Crear Nuevo Producto</h2>
+            <h2>{{editingMerchandise ? 'Editar Producto' : 'Crear Nuevo Producto'}}</h2>
             <mat-card class="form-card">
               <mat-card-content>
                 <form [formGroup]="merchandiseForm" (ngSubmit)="createMerchandise()" class="admin-form">
@@ -239,8 +244,11 @@
                   </div>
 
                   <div class="form-actions">
+                    <button mat-button type="button" *ngIf="editingMerchandise" (click)="cancelMerchandiseEdit()">
+                      Cancelar Edición
+                    </button>
                     <button mat-raised-button color="primary" type="submit" [disabled]="merchandiseForm.invalid">
-                      Crear Producto
+                      {{editingMerchandise ? 'Actualizar Producto' : 'Crear Producto'}}
                     </button>
                   </div>
                 </form>
@@ -266,6 +274,9 @@
                       </div>
                     </div>
                     <div class="item-actions">
+                      <button mat-icon-button color="primary" (click)="editMerchandise(item)">
+                        <mat-icon>edit</mat-icon>
+                      </button>
                       <button mat-icon-button color="warn" (click)="deleteMerchandise(item._id)">
                         <mat-icon>delete</mat-icon>
                       </button>
@@ -368,7 +379,7 @@
       <mat-tab label="Soporte">
         <div class="tab-content">
           <div class="admin-section">
-            <h2>Crear Artículo de Soporte</h2>
+            <h2>{{editingSupport ? 'Editar Artículo de Soporte' : 'Crear Artículo de Soporte'}}</h2>
             <mat-card class="form-card">
               <mat-card-content>
                 <form [formGroup]="supportForm" (ngSubmit)="createSupport()" class="admin-form">
@@ -392,8 +403,11 @@
                   </mat-form-field>
 
                   <div class="form-actions">
+                    <button mat-button type="button" *ngIf="editingSupport" (click)="cancelSupportEdit()">
+                      Cancelar Edición
+                    </button>
                     <button mat-raised-button color="primary" type="submit" [disabled]="supportForm.invalid">
-                      Crear Artículo
+                      {{editingSupport ? 'Actualizar Artículo' : 'Crear Artículo'}}
                     </button>
                   </div>
                 </form>
@@ -420,6 +434,9 @@
                       </div>
                     </div>
                     <div class="item-actions">
+                      <button mat-icon-button color="primary" (click)="editSupport(item)">
+                        <mat-icon>edit</mat-icon>
+                      </button>
                       <button mat-icon-button color="warn" (click)="deleteSupport(item._id)">
                         <mat-icon>delete</mat-icon>
                       </button>
@@ -444,7 +461,7 @@
                     <div class="item-info">
                       <div class="item-details">
                         <h4>{{user.firstName}} {{user.lastName}}</h4>
-                        <p>@{{user.username}} - {{user.email}}</p>
+                        <p>{{'@' + user.username}} - {{user.email}}</p>
                         <div class="user-stats">
                           <mat-chip [class]="'role-' + user.role">{{user.role}}</mat-chip>
                           <mat-chip [class]="user.isActive ? 'status-active' : 'status-inactive'">

@@ -63,6 +63,7 @@ const createMerchandise = async (req, res) => {
 
     const merchandiseData = {
       ...req.body,
+      featured: req.body.featured === 'true',
       images: images,
     }
 
@@ -108,6 +109,13 @@ const updateMerchandise = async (req, res) => {
       })
 
       updateData.images = [...(merchandise.images || []), ...newImages]
+    }
+    // Procesar tallas y colores si llegan como string
+    if (typeof updateData.sizes === "string") {
+      updateData.sizes = updateData.sizes.split(',').map(s => s.trim());
+    }
+    if (typeof updateData.colors === "string") {
+      updateData.colors = updateData.colors.split(',').map(c => c.trim());
     }
 
     const updatedMerchandise = await Merchandise.findByIdAndUpdate(req.params.id, updateData, {

@@ -11,6 +11,7 @@ import { MatCardModule } from "@angular/material/card"
 import { MatInputModule } from "@angular/material/input"
 import { MatFormFieldModule } from "@angular/material/form-field"
 import { MatSelectModule } from "@angular/material/select"
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from "@angular/material/icon"
 import { MatMenuModule } from "@angular/material/menu"
 import { MatTabsModule } from "@angular/material/tabs"
@@ -79,6 +80,7 @@ import { AdminComponent } from "./pages/admin/admin.component"
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatCheckboxModule,
     MatTableModule,
     MatPaginatorModule,
     MatDividerModule,

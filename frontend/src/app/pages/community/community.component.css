@@ -97,7 +97,28 @@
 
 .post-actions {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: 1rem;
+}
+
+.post-edit-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.post-edit-actions button {
+  min-width: auto;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+}
+
+.post-edit-actions .mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
 }
 
 .like-btn .liked {

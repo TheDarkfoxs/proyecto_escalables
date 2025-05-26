@@ -47,6 +47,11 @@ export class AdminComponent implements OnInit {
   supportCategories = ["Technical", "Account", "Billing", "Gameplay", "General"]
   merchandiseCategories = ["Clothing", "Accessories", "Collectibles", "Gaming Gear", "Art"]
 
+  // Variables para edición
+  editingGame: any = null
+  editingMerchandise: any = null
+  editingSupport: any = null
+
   constructor(
     private fb: FormBuilder,
     private gameService: GameService,
@@ -258,26 +263,151 @@ export class AdminComponent implements OnInit {
     })
   }
 
-  // Create methods
-  createGame(): void {
-    if (this.gameForm.valid) {
+  // Editar juego
+  editGame(game: any): void {
+    this.editingGame = game
+    this.gameForm.patchValue({
+      title: game.title,
+      description: game.description,
+      genre: game.genre,
+      price: game.price,
+      releaseDate: game.releaseDate ? new Date(game.releaseDate).toISOString().split("T")[0] : "",
+      platform: game.platform || [],
+      rating: game.rating,
+      featured: game.featured || false,
+    })
+    this.activeTab = 0 // Cambiar a la pestaña de juegos
+  }
+
+  // Actualizar juego
+  updateGame(): void {
+    if (this.gameForm.valid && this.editingGame) {
       const gameData = {
         ...this.gameForm.value,
         images: this.selectedGameImages.map((img) => img.file),
       }
 
-      this.gameService.createGame(gameData).subscribe({
+      this.gameService.updateGame(this.editingGame._id, gameData).subscribe({
         next: (response) => {
-          this.snackBar.open("Juego creado exitosamente", "Cerrar", { duration: 3000 })
-          this.gameForm.reset()
-          this.selectedGameImages = []
+          this.snackBar.open("Juego actualizado exitosamente", "Cerrar", { duration: 3000 })
+          this.cancelGameEdit()
           this.loadGames()
         },
         error: (error) => {
-          this.snackBar.open("Error al crear el juego", "Cerrar", { duration: 3000 })
+          this.snackBar.open("Error al actualizar el juego", "Cerrar", { duration: 3000 })
         },
       })
     }
+  }
+
+  // Cancelar edición de juego
+  cancelGameEdit(): void {
+    this.editingGame = null
+    this.gameForm.reset()
+    this.selectedGameImages = []
+  }
+
+  // Modificar createGame para manejar tanto crear como actualizar
+  createGame(): void {
+    if (this.editingGame) {
+      this.updateGame()
+    } else {
+      // Código existente para crear juego
+      if (this.gameForm.valid) {
+        const gameData = {
+          ...this.gameForm.value,
+          images: this.selectedGameImages.map((img) => img.file),
+        }
+
+        this.gameService.createGame(gameData).subscribe({
+          next: (response) => {
+            this.snackBar.open("Juego creado exitosamente", "Cerrar", { duration: 3000 })
+            this.gameForm.reset()
+            this.selectedGameImages = []
+            this.loadGames()
+          },
+          error: (error) => {
+            this.snackBar.open("Error al crear el juego", "Cerrar", { duration: 3000 })
+          },
+        })
+      }
+    }
+  }
+
+  // Métodos similares para mercancía y soporte
+  editMerchandise(item: any): void {
+    this.editingMerchandise = item
+    this.merchandiseForm.patchValue({
+      name: item.name,
+      description: item.description,
+      price: item.price,
+      category: item.category,
+      stock: item.stock,
+      sizes: item.sizes.join(", "),
+      colors: item.colors.join(", "),
+      featured: item.featured || false,
+    })
+    this.activeTab = 1 // Cambiar a la pestaña de mercancía
+  }
+
+  editSupport(item: any): void {
+    this.editingSupport = item
+    this.supportForm.patchValue({
+      question: item.question,
+      answer: item.answer,
+      category: item.category,
+    })
+    this.activeTab = 3 // Cambiar a la pestaña de soporte
+  }
+
+  // Actualizar mercancía
+  updateMerchandise(): void {
+    if (this.merchandiseForm.valid && this.editingMerchandise) {
+      const merchandiseData = {
+        ...this.merchandiseForm.value,
+        images: this.selectedMerchandiseImages.map((img) => img.file),
+      }
+
+      this.merchandiseService.updateMerchandise(this.editingMerchandise._id, merchandiseData).subscribe({
+        next: (response) => {
+          this.snackBar.open("Producto actualizado exitosamente", "Cerrar", { duration: 3000 })
+          this.cancelMerchandiseEdit()
+          this.loadMerchandise()
+        },
+        error: (error) => {
+          this.snackBar.open("Error al actualizar el producto", "Cerrar", { duration: 3000 })
+        },
+      })
+    }
+  }
+
+  // Cancelar edición de mercancía
+  cancelMerchandiseEdit(): void {
+    this.editingMerchandise = null
+    this.merchandiseForm.reset()
+    this.selectedMerchandiseImages = []
+  }
+
+  // Actualizar soporte
+  updateSupport(): void {
+    if (this.supportForm.valid && this.editingSupport) {
+      this.supportService.updateSupport(this.editingSupport._id, this.supportForm.value).subscribe({
+        next: (response) => {
+          this.snackBar.open("Artículo de soporte actualizado exitosamente", "Cerrar", { duration: 3000 })
+          this.cancelSupportEdit()
+          this.loadSupport()
+        },
+        error: (error) => {
+          this.snackBar.open("Error al actualizar el artículo de soporte", "Cerrar", { duration: 3000 })
+        },
+      })
+    }
+  }
+
+  // Cancelar edición de soporte
+  cancelSupportEdit(): void {
+    this.editingSupport = null
+    this.supportForm.reset()
   }
 
   createPost(): void {
@@ -301,38 +431,48 @@ export class AdminComponent implements OnInit {
   }
 
   createSupport(): void {
-    if (this.supportForm.valid) {
-      this.supportService.createSupport(this.supportForm.value).subscribe({
-        next: (response) => {
-          this.snackBar.open("Artículo de soporte creado exitosamente", "Cerrar", { duration: 3000 })
-          this.supportForm.reset()
-          this.loadSupport()
-        },
-        error: (error) => {
-          this.snackBar.open("Error al crear el artículo de soporte", "Cerrar", { duration: 3000 })
-        },
-      })
+    if (this.editingSupport) {
+      this.updateSupport()
+    } else {
+      // Código existente para crear soporte
+      if (this.supportForm.valid) {
+        this.supportService.createSupport(this.supportForm.value).subscribe({
+          next: (response) => {
+            this.snackBar.open("Artículo de soporte creado exitosamente", "Cerrar", { duration: 3000 })
+            this.supportForm.reset()
+            this.loadSupport()
+          },
+          error: (error) => {
+            this.snackBar.open("Error al crear el artículo de soporte", "Cerrar", { duration: 3000 })
+          },
+        })
+      }
     }
   }
 
   createMerchandise(): void {
-    if (this.merchandiseForm.valid) {
-      const merchandiseData = {
-        ...this.merchandiseForm.value,
-        images: this.selectedMerchandiseImages.map((img) => img.file),
-      }
+    if (this.editingMerchandise) {
+      this.updateMerchandise()
+    } else {
+      // Código existente para crear mercancía
+      if (this.merchandiseForm.valid) {
+        const merchandiseData = {
+          ...this.merchandiseForm.value,
+          images: this.selectedMerchandiseImages.map((img) => img.file),
+        }
 
-      this.merchandiseService.createMerchandise(merchandiseData).subscribe({
-        next: (response) => {
-          this.snackBar.open("Producto creado exitosamente", "Cerrar", { duration: 3000 })
-          this.merchandiseForm.reset()
-          this.selectedMerchandiseImages = []
-          this.loadMerchandise()
-        },
-        error: (error) => {
-          this.snackBar.open("Error al crear el producto", "Cerrar", { duration: 3000 })
-        },
-      })
+        this.merchandiseService.createMerchandise(merchandiseData).subscribe({
+          next: (response) => {
+            this.snackBar.open("Producto creado exitosamente", "Cerrar", { duration: 3000 })
+            this.merchandiseForm.reset()
+            this.selectedMerchandiseImages = []
+            this.loadMerchandise()
+          },
+          error: (error) => {
+            this.snackBar.open("Error al crear el producto", "Cerrar", { duration: 3000 })
+          },
+        })
+      }
     }
   }
 

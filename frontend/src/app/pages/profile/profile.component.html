@@ -14,7 +14,7 @@
         </div>
         <div class="profile-info">
           <h1>{{user.firstName}} {{user.lastName}}</h1>
-          <p class="username">@{{user.username}}</p>
+          <p class="username">{{'@' + user.username}}</p>
           <mat-chip [class]="'role-' + user.role">{{user.role}}</mat-chip>
         </div>
       </div>
