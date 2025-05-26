@@ -314,8 +314,10 @@ export class AdminComponent implements OnInit {
     } else {
       // Código existente para crear juego
       if (this.gameForm.valid) {
+        const raw = this.gameForm.value;
         const gameData = {
-          ...this.gameForm.value,
+          ...raw,
+          releaseDate: new Date(raw.releaseDate).toISOString(),
           images: this.selectedGameImages.map((img) => img.file),
         }
 
@@ -327,6 +329,7 @@ export class AdminComponent implements OnInit {
             this.loadGames()
           },
           error: (error) => {
+            console.error(error); 
             this.snackBar.open("Error al crear el juego", "Cerrar", { duration: 3000 })
           },
         })

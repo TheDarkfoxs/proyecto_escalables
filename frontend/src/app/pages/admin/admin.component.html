@@ -61,17 +61,17 @@
                       </mat-select>
                     </mat-form-field>
                   </div>
-<div class="form-row">
-  <mat-form-field appearance="outline" class="third-width">
-    <mat-label>Stock</mat-label>
-    <input matInput type="number" formControlName="stock">
-  </mat-form-field>
-
-  <div class="checkbox-container">
-    <mat-checkbox formControlName="featured">Destacado</mat-checkbox>
-  </div>
-</div>
-
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Fecha de lanzamiento</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="releaseDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                  <div class="form-row">
+                    <div class="checkbox-container">
+                      <mat-checkbox formControlName="featured">Destacado</mat-checkbox>
+                    </div>
+                  </div>
                   <!-- File Upload Section -->
                   <div class="file-upload-section">
                     <h3>Imágenes del Juego</h3>
