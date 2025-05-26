@@ -50,8 +50,9 @@
     <div class="card-grid" *ngIf="!loading">
       <mat-card *ngFor="let item of featuredMerchandise" class="merchandise-card">
         <div class="merchandise-image">
-          <img [src]="item.images?.[0] || '/assets/images/merchandise-placeholder.jpg'" 
-               [alt]="item.name">
+          <img [src]="getImageUrl(item.images?.[0])" 
+               [alt]="item.name"
+               (error)="onImageError($event)">
         </div>
         <mat-card-content>
           <h3>{{item.name}}</h3>

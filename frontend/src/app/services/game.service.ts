@@ -34,12 +34,54 @@ export class GameService {
     return this.http.get<Game[]>(`${this.apiUrl}/featured`)
   }
 
-  createGame(game: Game): Observable<any> {
-    return this.http.post(this.apiUrl, game)
+  createGame(gameData: any): Observable<any> {
+    const formData = new FormData()
+
+    // Agregar campos de texto
+    Object.keys(gameData).forEach((key) => {
+      if (key !== "images") {
+        if (Array.isArray(gameData[key])) {
+          gameData[key].forEach((item: any) => {
+            formData.append(key, item)
+          })
+        } else {
+          formData.append(key, gameData[key])
+        }
+      }
+    })
+
+    // Agregar imágenes
+    if (gameData.images && gameData.images.length > 0) {
+      gameData.images.forEach((file: File) => {
+        formData.append("images", file)
+      })
+    }
+
+    return this.http.post(this.apiUrl, formData)
   }
 
-  updateGame(id: string, game: Partial<Game>): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, game)
+  updateGame(id: string, gameData: any): Observable<any> {
+    const formData = new FormData()
+
+    Object.keys(gameData).forEach((key) => {
+      if (key !== "images") {
+        if (Array.isArray(gameData[key])) {
+          gameData[key].forEach((item: any) => {
+            formData.append(key, item)
+          })
+        } else {
+          formData.append(key, gameData[key])
+        }
+      }
+    })
+
+    if (gameData.images && gameData.images.length > 0) {
+      gameData.images.forEach((file: File) => {
+        formData.append("images", file)
+      })
+    }
+
+    return this.http.put(`${this.apiUrl}/${id}`, formData)
   }
 
   deleteGame(id: string): Observable<any> {

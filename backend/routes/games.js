@@ -10,6 +10,7 @@ const {
 } = require("../controllers/gameController")
 const auth = require("../middleware/auth")
 const roleAuth = require("../middleware/roleAuth")
+const { uploadMultiple } = require("../middleware/upload")
 
 const router = express.Router()
 
@@ -24,6 +25,7 @@ router.post(
   [
     auth,
     roleAuth(["admin"]),
+    uploadMultiple, // Middleware para manejar imágenes
     body("title").notEmpty().withMessage("Title is required"),
     body("description").notEmpty().withMessage("Description is required"),
     body("genre").notEmpty().withMessage("Genre is required"),
@@ -38,6 +40,7 @@ router.put(
   [
     auth,
     roleAuth(["admin"]),
+    uploadMultiple, // Middleware para manejar imágenes
     body("title").optional().notEmpty().withMessage("Title cannot be empty"),
     body("description").optional().notEmpty().withMessage("Description cannot be empty"),
     body("price").optional().isNumeric().withMessage("Price must be a number"),

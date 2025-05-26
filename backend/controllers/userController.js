@@ -19,6 +19,14 @@ const getAllUsers = async (req, res) => {
 
     const users = await User.find(query)
       .select("-password")
+      .populate({
+        path: "purchasedGames",
+        select: "title price",
+      })
+      .populate({
+        path: "purchasedMerchandise",
+        select: "name price",
+      })
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .sort({ createdAt: -1 })
@@ -41,8 +49,14 @@ const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
       .select("-password")
-      .populate("purchasedGames")
-      .populate("purchasedMerchandise")
+      .populate({
+        path: "purchasedGames",
+        select: "title description price genre images platform rating",
+      })
+      .populate({
+        path: "purchasedMerchandise",
+        select: "name description price category images stock",
+      })
 
     if (!user) {
       return res.status(404).json({ message: "User not found" })
@@ -122,7 +136,11 @@ const purchaseGame = async (req, res) => {
 
     res.json({
       message: "Game purchased successfully",
-      game,
+      game: {
+        _id: game._id,
+        title: game.title,
+        price: game.price,
+      },
     })
   } catch (error) {
     console.error(error)
@@ -153,7 +171,11 @@ const purchaseMerchandise = async (req, res) => {
 
     res.json({
       message: "Merchandise purchased successfully",
-      merchandise,
+      merchandise: {
+        _id: merchandise._id,
+        name: merchandise.name,
+        price: merchandise.price,
+      },
     })
   } catch (error) {
     console.error(error)

@@ -7,10 +7,31 @@ export interface User {
   role: "user" | "admin"
   avatar?: string
   isActive?: boolean
-  purchasedGames?: string[]
-  purchasedMerchandise?: string[]
+  purchasedGames?: PurchasedGame[]
+  purchasedMerchandise?: PurchasedMerchandise[]
   createdAt?: Date
   updatedAt?: Date
+}
+
+export interface PurchasedGame {
+  _id: string
+  title: string
+  description?: string
+  price: number
+  genre?: string
+  images?: string[]
+  platform?: string[]
+  rating?: string
+}
+
+export interface PurchasedMerchandise {
+  _id: string
+  name: string
+  description?: string
+  price: number
+  category?: string
+  images?: string[]
+  stock?: number
 }
 
 export interface AuthResponse {

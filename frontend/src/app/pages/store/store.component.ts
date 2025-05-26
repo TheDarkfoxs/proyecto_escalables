@@ -4,6 +4,7 @@ import { UserService } from "../../services/user.service"
 import { AuthService } from "../../services/auth.service"
 import { Merchandise, MerchandiseResponse } from "../../models/merchandise.model"
 import { MatSnackBar } from "@angular/material/snack-bar"
+import { environment } from "../../../environments/environment"
 
 @Component({
   selector: "app-store",
@@ -91,6 +92,14 @@ export class StoreComponent implements OnInit {
     })
   }
 
+  getImageUrl(imagePath: string | undefined): string {
+    if (!imagePath) return "/assets/images/merchandise-placeholder.jpg"
+    if (imagePath.startsWith("http")) {
+      return imagePath
+    }
+    return `${environment.apiUrl.replace("/api", "")}${imagePath}`
+  }
+
   clearFilters(): void {
     this.searchTerm = ""
     this.selectedCategory = ""
@@ -100,5 +109,12 @@ export class StoreComponent implements OnInit {
 
   isAuthenticated(): boolean {
     return this.authService.isAuthenticated()
+  }
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement
+    if (target) {
+      target.src = "/assets/images/merchandise-placeholder.jpg"
+    }
   }
 }

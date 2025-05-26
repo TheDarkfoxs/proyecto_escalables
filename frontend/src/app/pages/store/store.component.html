@@ -55,9 +55,10 @@
     <div class="merchandise-grid" *ngIf="!loading">
       <mat-card *ngFor="let item of merchandise" class="merchandise-card">
         <div class="merchandise-image">
-          <img [src]="item.images?.[0] || '/assets/images/merchandise-placeholder.jpg'" 
+          <img [src]="getImageUrl(item.images?.[0])" 
                [alt]="item.name" 
-               class="card-image">
+               class="card-image"
+               (error)="onImageError($event)">
           <div class="merchandise-overlay" *ngIf="item.stock === 0">
             <span class="out-of-stock">Agotado</span>
           </div>

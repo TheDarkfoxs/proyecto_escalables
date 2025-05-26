@@ -34,12 +34,52 @@ export class MerchandiseService {
     return this.http.get<Merchandise[]>(`${this.apiUrl}/featured`)
   }
 
-  createMerchandise(merchandise: Merchandise): Observable<any> {
-    return this.http.post(this.apiUrl, merchandise)
+  createMerchandise(merchandiseData: any): Observable<any> {
+    const formData = new FormData()
+
+    Object.keys(merchandiseData).forEach((key) => {
+      if (key !== "images") {
+        if (Array.isArray(merchandiseData[key])) {
+          merchandiseData[key].forEach((item: any) => {
+            formData.append(key, item)
+          })
+        } else {
+          formData.append(key, merchandiseData[key])
+        }
+      }
+    })
+
+    if (merchandiseData.images && merchandiseData.images.length > 0) {
+      merchandiseData.images.forEach((file: File) => {
+        formData.append("images", file)
+      })
+    }
+
+    return this.http.post(this.apiUrl, formData)
   }
 
-  updateMerchandise(id: string, merchandise: Partial<Merchandise>): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, merchandise)
+  updateMerchandise(id: string, merchandiseData: any): Observable<any> {
+    const formData = new FormData()
+
+    Object.keys(merchandiseData).forEach((key) => {
+      if (key !== "images") {
+        if (Array.isArray(merchandiseData[key])) {
+          merchandiseData[key].forEach((item: any) => {
+            formData.append(key, item)
+          })
+        } else {
+          formData.append(key, merchandiseData[key])
+        }
+      }
+    })
+
+    if (merchandiseData.images && merchandiseData.images.length > 0) {
+      merchandiseData.images.forEach((file: File) => {
+        formData.append("images", file)
+      })
+    }
+
+    return this.http.put(`${this.apiUrl}/${id}`, formData)
   }
 
   deleteMerchandise(id: string): Observable<any> {

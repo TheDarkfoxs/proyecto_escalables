@@ -98,8 +98,14 @@ const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id)
       .select("-password")
-      .populate("purchasedGames")
-      .populate("purchasedMerchandise")
+      .populate({
+        path: "purchasedGames",
+        select: "title description price genre images platform rating",
+      })
+      .populate({
+        path: "purchasedMerchandise",
+        select: "name description price category images stock",
+      })
 
     res.json(user)
   } catch (error) {

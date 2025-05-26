@@ -1,5 +1,6 @@
 const Merchandise = require("../models/Merchandise")
 const { validationResult } = require("express-validator")
+const path = require("path")
 
 const getAllMerchandise = async (req, res) => {
   try {
@@ -52,7 +53,28 @@ const createMerchandise = async (req, res) => {
       return res.status(400).json({ errors: errors.array() })
     }
 
-    const merchandise = new Merchandise(req.body)
+    // Procesar imágenes subidas
+    const images = []
+    if (req.files && req.files.length > 0) {
+      req.files.forEach((file) => {
+        images.push(`/uploads/${path.relative("uploads", file.path)}`)
+      })
+    }
+
+    const merchandiseData = {
+      ...req.body,
+      images: images,
+    }
+
+    // Procesar arrays de sizes y colors si vienen como strings
+    if (typeof merchandiseData.sizes === "string") {
+      merchandiseData.sizes = merchandiseData.sizes.split(",").map((s) => s.trim())
+    }
+    if (typeof merchandiseData.colors === "string") {
+      merchandiseData.colors = merchandiseData.colors.split(",").map((c) => c.trim())
+    }
+
+    const merchandise = new Merchandise(merchandiseData)
     await merchandise.save()
 
     res.status(201).json({
@@ -72,15 +94,30 @@ const updateMerchandise = async (req, res) => {
       return res.status(400).json({ errors: errors.array() })
     }
 
-    const merchandise = await Merchandise.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
-
+    const merchandise = await Merchandise.findById(req.params.id)
     if (!merchandise) {
       return res.status(404).json({ message: "Merchandise not found" })
     }
 
+    // Procesar nuevas imágenes si se subieron
+    const updateData = { ...req.body }
+    if (req.files && req.files.length > 0) {
+      const newImages = []
+      req.files.forEach((file) => {
+        newImages.push(`/uploads/${path.relative("uploads", file.path)}`)
+      })
+
+      updateData.images = [...(merchandise.images || []), ...newImages]
+    }
+
+    const updatedMerchandise = await Merchandise.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+      runValidators: true,
+    })
+
     res.json({
       message: "Merchandise updated successfully",
-      merchandise,
+      merchandise: updatedMerchandise,
     })
   } catch (error) {
     console.error(error)

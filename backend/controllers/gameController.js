@@ -1,5 +1,7 @@
 const Game = require("../models/Game")
 const { validationResult } = require("express-validator")
+const fs = require("fs")
+const path = require("path")
 
 const getAllGames = async (req, res) => {
   try {
@@ -53,7 +55,26 @@ const createGame = async (req, res) => {
       return res.status(400).json({ errors: errors.array() })
     }
 
-    const game = new Game(req.body)
+    // Procesar imágenes subidas
+    const images = []
+    if (req.files && req.files.length > 0) {
+      req.files.forEach((file) => {
+        // Guardar la ruta relativa para servir las imágenes
+        images.push(`/uploads/${path.relative("uploads", file.path)}`)
+      })
+    }
+
+    const gameData = {
+      ...req.body,
+      images: images,
+    }
+
+    // Convertir platform de string a array si es necesario
+    if (typeof gameData.platform === "string") {
+      gameData.platform = [gameData.platform]
+    }
+
+    const game = new Game(gameData)
     await game.save()
 
     res.status(201).json({
@@ -73,15 +94,31 @@ const updateGame = async (req, res) => {
       return res.status(400).json({ errors: errors.array() })
     }
 
-    const game = await Game.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
-
+    const game = await Game.findById(req.params.id)
     if (!game) {
       return res.status(404).json({ message: "Game not found" })
     }
 
+    // Procesar nuevas imágenes si se subieron
+    const updateData = { ...req.body }
+    if (req.files && req.files.length > 0) {
+      const newImages = []
+      req.files.forEach((file) => {
+        newImages.push(`/uploads/${path.relative("uploads", file.path)}`)
+      })
+
+      // Agregar nuevas imágenes a las existentes o reemplazar
+      updateData.images = [...(game.images || []), ...newImages]
+    }
+
+    const updatedGame = await Game.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+      runValidators: true,
+    })
+
     res.json({
       message: "Game updated successfully",
-      game,
+      game: updatedGame,
     })
   } catch (error) {
     console.error(error)

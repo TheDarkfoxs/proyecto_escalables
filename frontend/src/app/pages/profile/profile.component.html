@@ -130,8 +130,21 @@
               <mat-card-content>
                 <div class="games-list" *ngIf="user.purchasedGames && user.purchasedGames.length > 0">
                   <div *ngFor="let game of user.purchasedGames" class="game-item">
-                    <mat-icon>videogame_asset</mat-icon>
-                    <span>{{game}}</span>
+                    <div class="item-image" *ngIf="game.images && game.images.length > 0">
+                      <img [src]="getImageUrl(game.images[0])" [alt]="game.title">
+                    </div>
+                    <div class="item-image placeholder" *ngIf="!game.images || game.images.length === 0">
+                      <mat-icon>videogame_asset</mat-icon>
+                    </div>
+                    <div class="item-details">
+                      <h4>{{game.title}}</h4>
+                      <p>{{game.genre}} - ${{game.price}}</p>
+                      <div class="platforms" *ngIf="game.platform && game.platform.length > 0">
+                        <mat-chip *ngFor="let platform of game.platform" class="platform-chip">
+                          {{platform}}
+                        </mat-chip>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 
@@ -162,8 +175,17 @@
               <mat-card-content>
                 <div class="merchandise-list" *ngIf="user.purchasedMerchandise && user.purchasedMerchandise.length > 0">
                   <div *ngFor="let item of user.purchasedMerchandise" class="merchandise-item">
-                    <mat-icon>shopping_bag</mat-icon>
-                    <span>{{item}}</span>
+                    <div class="item-image" *ngIf="item.images && item.images.length > 0">
+                      <img [src]="getImageUrl(item.images[0])" [alt]="item.name">
+                    </div>
+                    <div class="item-image placeholder" *ngIf="!item.images || item.images.length === 0">
+                      <mat-icon>shopping_bag</mat-icon>
+                    </div>
+                    <div class="item-details">
+                      <h4>{{item.name}}</h4>
+                      <p>{{item.category}} - ${{item.price}}</p>
+                      <p class="description">{{item.description | slice:0:100}}...</p>
+                    </div>
                   </div>
                 </div>
                 

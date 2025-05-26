@@ -4,6 +4,7 @@ import { AuthService } from "../../services/auth.service"
 import { UserService } from "../../services/user.service"
 import { User } from "../../models/user.model"
 import { MatSnackBar } from "@angular/material/snack-bar"
+import { environment } from "../../../environments/environment"
 
 @Component({
   selector: "app-profile",
@@ -12,7 +13,7 @@ import { MatSnackBar } from "@angular/material/snack-bar"
 })
 export class ProfileComponent implements OnInit {
   user: User | null = null
-  profileForm: FormGroup
+  profileForm!: FormGroup
   loading = true
   updating = false
   activeTab = 0
@@ -74,6 +75,14 @@ export class ProfileComponent implements OnInit {
         },
       })
     }
+  }
+
+  getImageUrl(imagePath: string): string {
+    if (!imagePath) return "/assets/images/placeholder.jpg"
+    if (imagePath.startsWith("http")) {
+      return imagePath
+    }
+    return `${environment.apiUrl.replace("/api", "")}${imagePath}`
   }
 
   getErrorMessage(field: string): string {

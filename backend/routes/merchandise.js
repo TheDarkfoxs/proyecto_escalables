@@ -10,6 +10,7 @@ const {
 } = require("../controllers/merchandiseController")
 const auth = require("../middleware/auth")
 const roleAuth = require("../middleware/roleAuth")
+const { uploadMultiple } = require("../middleware/upload")
 
 const router = express.Router()
 
@@ -24,6 +25,7 @@ router.post(
   [
     auth,
     roleAuth(["admin"]),
+    uploadMultiple, // Middleware para manejar imágenes
     body("name").notEmpty().withMessage("Name is required"),
     body("description").notEmpty().withMessage("Description is required"),
     body("price").isNumeric().withMessage("Price must be a number"),
@@ -38,6 +40,7 @@ router.put(
   [
     auth,
     roleAuth(["admin"]),
+    uploadMultiple, // Middleware para manejar imágenes
     body("name").optional().notEmpty().withMessage("Name cannot be empty"),
     body("price").optional().isNumeric().withMessage("Price must be a number"),
     body("stock").optional().isNumeric().withMessage("Stock must be a number"),

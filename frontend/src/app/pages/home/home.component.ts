@@ -5,6 +5,7 @@ import { PostService } from "../../services/post.service"
 import { Game } from "../../models/game.model"
 import { Merchandise } from "../../models/merchandise.model"
 import { Post } from "../../models/post.model"
+import { environment } from "../../../environments/environment"
 
 @Component({
   selector: "app-home",
@@ -55,5 +56,20 @@ export class HomeComponent implements OnInit {
         this.loading = false
       },
     })
+  }
+
+  getImageUrl(imagePath: string | undefined): string {
+    if (!imagePath) return "/assets/images/placeholder.jpg"
+    if (imagePath.startsWith("http")) {
+      return imagePath
+    }
+    return `${environment.apiUrl.replace("/api", "")}${imagePath}`
+  }
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement
+    if (target) {
+      target.src = "/assets/images/merchandise-placeholder.jpg"
+    }
   }
 }

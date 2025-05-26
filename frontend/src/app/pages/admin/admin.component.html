@@ -73,6 +73,40 @@
                     </div>
                   </div>
 
+                  <!-- File Upload Section -->
+                  <div class="file-upload-section">
+                    <h3>Imágenes del Juego</h3>
+                    <div class="upload-area" 
+                         (dragover)="onDragOver($event)" 
+                         (dragleave)="onDragLeave($event)"
+                         (drop)="onGameImagesDrop($event)">
+                      <input type="file" 
+                             #gameFileInput 
+                             multiple 
+                             accept="image/*" 
+                             (change)="onGameImagesSelected($event)"
+                             style="display: none;">
+                      <div class="upload-content">
+                        <mat-icon>cloud_upload</mat-icon>
+                        <p>Arrastra imágenes aquí o <button type="button" mat-button color="primary" (click)="gameFileInput.click()">selecciona archivos</button></p>
+                        <small>Máximo 5 imágenes, 5MB cada una</small>
+                      </div>
+                    </div>
+                    
+                    <!-- Preview de imágenes seleccionadas -->
+                    <div class="image-preview" *ngIf="selectedGameImages.length > 0">
+                      <h4>Imágenes seleccionadas:</h4>
+                      <div class="preview-grid">
+                        <div *ngFor="let image of selectedGameImages; let i = index" class="preview-item">
+                          <img [src]="image.preview" [alt]="image.file.name">
+                          <button type="button" mat-icon-button color="warn" (click)="removeGameImage(i)">
+                            <mat-icon>close</mat-icon>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <div class="form-actions">
                     <button mat-raised-button color="primary" type="submit" [disabled]="gameForm.invalid">
                       Crear Juego
@@ -91,146 +125,17 @@
                 <div class="items-list">
                   <div *ngFor="let game of games" class="list-item">
                     <div class="item-info">
-                      <h4>{{game.title}}</h4>
-                      <p>{{game.genre}} - ${{game.price}}</p>
-                      <mat-chip *ngIf="game.featured" class="featured-chip">Destacado</mat-chip>
+                      <div class="item-image" *ngIf="game.images && game.images.length > 0">
+                        <img [src]="getImageUrl(game.images[0])" [alt]="game.title">
+                      </div>
+                      <div class="item-details">
+                        <h4>{{game.title}}</h4>
+                        <p>{{game.genre}} - ${{game.price}}</p>
+                        <mat-chip *ngIf="game.featured" class="featured-chip">Destacado</mat-chip>
+                      </div>
                     </div>
                     <div class="item-actions">
                       <button mat-icon-button color="warn" (click)="deleteGame(game._id)">
-                        <mat-icon>delete</mat-icon>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </mat-card-content>
-            </mat-card>
-          </div>
-        </div>
-      </mat-tab>
-
-      <!-- Posts Management -->
-      <mat-tab label="Posts">
-        <div class="tab-content">
-          <div class="admin-section">
-            <h2>Crear Nuevo Post</h2>
-            <mat-card class="form-card">
-              <mat-card-content>
-                <form [formGroup]="postForm" (ngSubmit)="createPost()" class="admin-form">
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Título</mat-label>
-                    <input matInput formControlName="title">
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Contenido</mat-label>
-                    <textarea matInput formControlName="content" rows="5"></textarea>
-                  </mat-form-field>
-
-                  <div class="form-row">
-                    <mat-form-field appearance="outline" class="half-width">
-                      <mat-label>Categoría</mat-label>
-                      <mat-select formControlName="category">
-                        <mat-option *ngFor="let category of postCategories" [value]="category">
-                          {{category}}
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline" class="half-width">
-                      <mat-label>Tags (separados por comas)</mat-label>
-                      <input matInput formControlName="tags">
-                    </mat-form-field>
-                  </div>
-
-                  <div class="checkbox-group">
-                    <mat-checkbox formControlName="featured">Destacado</mat-checkbox>
-                  </div>
-
-                  <div class="form-actions">
-                    <button mat-raised-button color="primary" type="submit" [disabled]="postForm.invalid">
-                      Crear Post
-                    </button>
-                  </div>
-                </form>
-              </mat-card-content>
-            </mat-card>
-          </div>
-
-          <!-- Posts List -->
-          <div class="admin-section">
-            <h2>Posts Existentes</h2>
-            <mat-card class="list-card">
-              <mat-card-content>
-                <div class="items-list">
-                  <div *ngFor="let post of posts" class="list-item">
-                    <div class="item-info">
-                      <h4>{{post.title}}</h4>
-                      <p>{{post.category}} - {{post.createdAt | date:'short'}}</p>
-                      <mat-chip *ngIf="post.featured" class="featured-chip">Destacado</mat-chip>
-                    </div>
-                    <div class="item-actions">
-                      <button mat-icon-button color="warn" (click)="deletePost(post._id)">
-                        <mat-icon>delete</mat-icon>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </mat-card-content>
-            </mat-card>
-          </div>
-        </div>
-      </mat-tab>
-
-      <!-- Support Management -->
-      <mat-tab label="Soporte">
-        <div class="tab-content">
-          <div class="admin-section">
-            <h2>Crear Artículo de Soporte</h2>
-            <mat-card class="form-card">
-              <mat-card-content>
-                <form [formGroup]="supportForm" (ngSubmit)="createSupport()" class="admin-form">
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Pregunta</mat-label>
-                    <input matInput formControlName="question">
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Respuesta</mat-label>
-                    <textarea matInput formControlName="answer" rows="5"></textarea>
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Categoría</mat-label>
-                    <mat-select formControlName="category">
-                      <mat-option *ngFor="let category of supportCategories" [value]="category">
-                        {{category}}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field>
-
-                  <div class="form-actions">
-                    <button mat-raised-button color="primary" type="submit" [disabled]="supportForm.invalid">
-                      Crear Artículo
-                    </button>
-                  </div>
-                </form>
-              </mat-card-content>
-            </mat-card>
-          </div>
-
-          <!-- Support List -->
-          <div class="admin-section">
-            <h2>Artículos de Soporte</h2>
-            <mat-card class="list-card">
-              <mat-card-content>
-                <div class="items-list">
-                  <div *ngFor="let item of supportItems" class="list-item">
-                    <div class="item-info">
-                      <h4>{{item.question}}</h4>
-                      <p>{{item.category}} - {{item.helpfulCount}} útiles</p>
-                    </div>
-                    <div class="item-actions">
-                      <button mat-icon-button color="warn" (click)="deleteSupport(item._id)">
                         <mat-icon>delete</mat-icon>
                       </button>
                     </div>
@@ -268,7 +173,7 @@
                   </mat-form-field>
 
                   <div class="form-row">
-                    <mat-form-field appearance="outline" class="half-width">
+                    <mat-form-field appearance="outline" class="third-width">
                       <mat-label>Categoría</mat-label>
                       <mat-select formControlName="category">
                         <mat-option *ngFor="let category of merchandiseCategories" [value]="category">
@@ -277,14 +182,60 @@
                       </mat-select>
                     </mat-form-field>
 
-                    <mat-form-field appearance="outline" class="half-width">
+                    <mat-form-field appearance="outline" class="third-width">
                       <mat-label>Stock</mat-label>
                       <input matInput type="number" formControlName="stock">
                     </mat-form-field>
+
+                    <div class="checkbox-group">
+                      <mat-checkbox formControlName="featured">Destacado</mat-checkbox>
+                    </div>
                   </div>
 
-                  <div class="checkbox-group">
-                    <mat-checkbox formControlName="featured">Destacado</mat-checkbox>
+                  <div class="form-row">
+                    <mat-form-field appearance="outline" class="half-width">
+                      <mat-label>Tallas (separadas por comas)</mat-label>
+                      <input matInput formControlName="sizes" placeholder="S, M, L, XL">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="half-width">
+                      <mat-label>Colores (separados por comas)</mat-label>
+                      <input matInput formControlName="colors" placeholder="Rojo, Azul, Verde">
+                    </mat-form-field>
+                  </div>
+
+                  <!-- File Upload Section -->
+                  <div class="file-upload-section">
+                    <h3>Imágenes del Producto</h3>
+                    <div class="upload-area" 
+                         (dragover)="onDragOver($event)" 
+                         (dragleave)="onDragLeave($event)"
+                         (drop)="onMerchandiseImagesDrop($event)">
+                      <input type="file" 
+                             #merchandiseFileInput 
+                             multiple 
+                             accept="image/*" 
+                             (change)="onMerchandiseImagesSelected($event)"
+                             style="display: none;">
+                      <div class="upload-content">
+                        <mat-icon>cloud_upload</mat-icon>
+                        <p>Arrastra imágenes aquí o <button type="button" mat-button color="primary" (click)="merchandiseFileInput.click()">selecciona archivos</button></p>
+                        <small>Máximo 5 imágenes, 5MB cada una</small>
+                      </div>
+                    </div>
+                    
+                    <!-- Preview de imágenes seleccionadas -->
+                    <div class="image-preview" *ngIf="selectedMerchandiseImages.length > 0">
+                      <h4>Imágenes seleccionadas:</h4>
+                      <div class="preview-grid">
+                        <div *ngFor="let image of selectedMerchandiseImages; let i = index" class="preview-item">
+                          <img [src]="image.preview" [alt]="image.file.name">
+                          <button type="button" mat-icon-button color="warn" (click)="removeMerchandiseImage(i)">
+                            <mat-icon>close</mat-icon>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <div class="form-actions">
@@ -305,12 +256,171 @@
                 <div class="items-list">
                   <div *ngFor="let item of merchandise" class="list-item">
                     <div class="item-info">
-                      <h4>{{item.name}}</h4>
-                      <p>{{item.category}} - ${{item.price}} - Stock: {{item.stock}}</p>
-                      <mat-chip *ngIf="item.featured" class="featured-chip">Destacado</mat-chip>
+                      <div class="item-image" *ngIf="item.images && item.images.length > 0">
+                        <img [src]="getImageUrl(item.images[0])" [alt]="item.name">
+                      </div>
+                      <div class="item-details">
+                        <h4>{{item.name}}</h4>
+                        <p>{{item.category}} - ${{item.price}} - Stock: {{item.stock}}</p>
+                        <mat-chip *ngIf="item.featured" class="featured-chip">Destacado</mat-chip>
+                      </div>
                     </div>
                     <div class="item-actions">
                       <button mat-icon-button color="warn" (click)="deleteMerchandise(item._id)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Posts Management -->
+      <mat-tab label="Posts Comunidad">
+        <div class="tab-content">
+          <div class="admin-section">
+            <h2>Crear Nuevo Post</h2>
+            <mat-card class="form-card">
+              <mat-card-content>
+                <form [formGroup]="postForm" (ngSubmit)="createPost()" class="admin-form">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Título</mat-label>
+                    <input matInput formControlName="title">
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Contenido</mat-label>
+                    <textarea matInput formControlName="content" rows="6"></textarea>
+                  </mat-form-field>
+
+                  <div class="form-row">
+                    <mat-form-field appearance="outline" class="half-width">
+                      <mat-label>Categoría</mat-label>
+                      <mat-select formControlName="category">
+                        <mat-option *ngFor="let category of postCategories" [value]="category">
+                          {{category}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="half-width">
+                      <mat-label>Tags (separados por comas)</mat-label>
+                      <input matInput formControlName="tags" placeholder="gaming, review, tips">
+                    </mat-form-field>
+                  </div>
+
+                  <div class="checkbox-group">
+                    <mat-checkbox formControlName="featured">Post Destacado</mat-checkbox>
+                  </div>
+
+                  <div class="form-actions">
+                    <button mat-raised-button color="primary" type="submit" [disabled]="postForm.invalid">
+                      Crear Post
+                    </button>
+                  </div>
+                </form>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <!-- Posts List -->
+          <div class="admin-section">
+            <h2>Posts Existentes</h2>
+            <mat-card class="list-card">
+              <mat-card-content>
+                <div class="items-list">
+                  <div *ngFor="let post of posts" class="list-item">
+                    <div class="item-info">
+                      <div class="item-details">
+                        <h4>{{post.title}}</h4>
+                        <p>{{post.category}} - Por: {{post.author?.firstName}} {{post.author?.lastName}}</p>
+                        <p class="post-preview">{{post.content | slice:0:100}}...</p>
+                        <div class="post-stats">
+                          <mat-chip class="stats-chip">
+                            <mat-icon>favorite</mat-icon>
+                            {{post.likes?.length || 0}}
+                          </mat-chip>
+                          <mat-chip class="stats-chip">
+                            <mat-icon>comment</mat-icon>
+                            {{post.comments?.length || 0}}
+                          </mat-chip>
+                          <mat-chip *ngIf="post.featured" class="featured-chip">Destacado</mat-chip>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="item-actions">
+                      <button mat-icon-button color="warn" (click)="deletePost(post._id)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Support Management -->
+      <mat-tab label="Soporte">
+        <div class="tab-content">
+          <div class="admin-section">
+            <h2>Crear Artículo de Soporte</h2>
+            <mat-card class="form-card">
+              <mat-card-content>
+                <form [formGroup]="supportForm" (ngSubmit)="createSupport()" class="admin-form">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Pregunta</mat-label>
+                    <input matInput formControlName="question">
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Respuesta</mat-label>
+                    <textarea matInput formControlName="answer" rows="6"></textarea>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>Categoría</mat-label>
+                    <mat-select formControlName="category">
+                      <mat-option *ngFor="let category of supportCategories" [value]="category">
+                        {{category}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <div class="form-actions">
+                    <button mat-raised-button color="primary" type="submit" [disabled]="supportForm.invalid">
+                      Crear Artículo
+                    </button>
+                  </div>
+                </form>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <!-- Support List -->
+          <div class="admin-section">
+            <h2>Artículos de Soporte Existentes</h2>
+            <mat-card class="list-card">
+              <mat-card-content>
+                <div class="items-list">
+                  <div *ngFor="let item of supportItems" class="list-item">
+                    <div class="item-info">
+                      <div class="item-details">
+                        <h4>{{item.question}}</h4>
+                        <p>{{item.category}} - Creado por: {{item.createdBy?.username}}</p>
+                        <p class="support-preview">{{item.answer | slice:0:100}}...</p>
+                        <mat-chip class="stats-chip">
+                          <mat-icon>thumb_up</mat-icon>
+                          {{item.helpfulCount || 0}} útiles
+                        </mat-chip>
+                      </div>
+                    </div>
+                    <div class="item-actions">
+                      <button mat-icon-button color="warn" (click)="deleteSupport(item._id)">
                         <mat-icon>delete</mat-icon>
                       </button>
                     </div>
@@ -332,16 +442,24 @@
                 <div class="items-list">
                   <div *ngFor="let user of users" class="list-item">
                     <div class="item-info">
-                      <h4>{{user.firstName}} {{user.lastName}}</h4>
-                      <p>@{{user.username}} - {{user.email}}</p>
-                      <mat-chip [class]="'role-' + user.role">{{user.role}}</mat-chip>
-                      <mat-chip [class]="user.isActive ? 'status-active' : 'status-inactive'">
-                        {{user.isActive ? 'Activo' : 'Inactivo'}}
-                      </mat-chip>
+                      <div class="item-details">
+                        <h4>{{user.firstName}} {{user.lastName}}</h4>
+                        <p>@{{user.username}} - {{user.email}}</p>
+                        <div class="user-stats">
+                          <mat-chip [class]="'role-' + user.role">{{user.role}}</mat-chip>
+                          <mat-chip [class]="user.isActive ? 'status-active' : 'status-inactive'">
+                            {{user.isActive ? 'Activo' : 'Inactivo'}}
+                          </mat-chip>
+                          <span class="user-date">Registrado: {{user.createdAt | date:'short'}}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div class="item-actions" *ngIf="user.role !== 'admin'">
-                      <button mat-icon-button color="warn" (click)="deleteUser(user._id)">
-                        <mat-icon>block</mat-icon>
+                    <div class="item-actions">
+                      <button mat-icon-button 
+                              color="warn" 
+                              (click)="deleteUser(user._id)"
+                              [disabled]="user.role === 'admin'">
+                        <mat-icon>person_remove</mat-icon>
                       </button>
                     </div>
                   </div>

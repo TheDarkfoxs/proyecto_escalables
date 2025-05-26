@@ -1,8 +1,9 @@
 <mat-card class="game-card">
   <div class="game-image">
-    <img [src]="game.images?.[0] || '/assets/images/game-placeholder.jpg'" 
+    <img [src]="getImageUrl(game.images?.[0])" 
          [alt]="game.title" 
-         class="card-image">
+         class="card-image"
+         (error)="onImageError($event)">
     <div class="game-overlay">
       <span class="game-genre">{{game.genre}}</span>
       <span class="game-rating">{{game.rating}}</span>

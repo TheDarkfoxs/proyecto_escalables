@@ -3,6 +3,7 @@ import { Game } from "../../models/game.model"
 import { AuthService } from "../../services/auth.service"
 import { UserService } from "../../services/user.service"
 import { MatSnackBar } from "@angular/material/snack-bar"
+import { environment } from "../../../environments/environment"
 
 @Component({
   selector: "app-game-card",
@@ -42,7 +43,22 @@ export class GameCardComponent {
     }
   }
 
+  getImageUrl(imagePath: string | undefined): string {
+    if (!imagePath) return "/assets/images/game-placeholder.jpg"
+    if (imagePath.startsWith("http")) {
+      return imagePath
+    }
+    return `${environment.apiUrl.replace("/api", "")}${imagePath}`
+  }
+
   isAuthenticated(): boolean {
     return this.authService.isAuthenticated()
+  }
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement
+    if (target) {
+      target.src = "/assets/images/game-placeholder.jpg"
+    }
   }
 }

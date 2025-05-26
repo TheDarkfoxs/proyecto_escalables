@@ -6,6 +6,12 @@ import { SupportService } from "../../services/support.service"
 import { MerchandiseService } from "../../services/merchandise.service"
 import { UserService } from "../../services/user.service"
 import { MatSnackBar } from "@angular/material/snack-bar"
+import { environment } from "../../../environments/environment"
+
+interface ImagePreview {
+  file: File
+  preview: string
+}
 
 @Component({
   selector: "app-admin",
@@ -21,6 +27,10 @@ export class AdminComponent implements OnInit {
   postForm!: FormGroup
   supportForm!: FormGroup
   merchandiseForm!: FormGroup
+
+  // Image handling
+  selectedGameImages: ImagePreview[] = []
+  selectedMerchandiseImages: ImagePreview[] = []
 
   // Data
   games: any[] = []
@@ -85,8 +95,114 @@ export class AdminComponent implements OnInit {
       price: [0, [Validators.required, Validators.min(0)]],
       category: ["", Validators.required],
       stock: [0, [Validators.required, Validators.min(0)]],
+      sizes: [""],
+      colors: [""],
       featured: [false],
     })
+  }
+
+  // Image handling methods
+  onGameImagesSelected(event: any): void {
+    this.handleImageSelection(event.target.files, "game")
+  }
+
+  onMerchandiseImagesSelected(event: any): void {
+    this.handleImageSelection(event.target.files, "merchandise")
+  }
+
+  onGameImagesDrop(event: DragEvent): void {
+    event.preventDefault()
+    event.stopPropagation()
+    const files = event.dataTransfer?.files
+    if (files) {
+      this.handleImageSelection(files, "game")
+    }
+    this.removeDragOverClass(event.target as HTMLElement)
+  }
+
+  onMerchandiseImagesDrop(event: DragEvent): void {
+    event.preventDefault()
+    event.stopPropagation()
+    const files = event.dataTransfer?.files
+    if (files) {
+      this.handleImageSelection(files, "merchandise")
+    }
+    this.removeDragOverClass(event.target as HTMLElement)
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault()
+    event.stopPropagation()
+    this.addDragOverClass(event.target as HTMLElement)
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault()
+    event.stopPropagation()
+    this.removeDragOverClass(event.target as HTMLElement)
+  }
+
+  private addDragOverClass(element: HTMLElement): void {
+    element.classList.add("drag-over")
+  }
+
+  private removeDragOverClass(element: HTMLElement): void {
+    element.classList.remove("drag-over")
+  }
+
+  private handleImageSelection(files: FileList, type: "game" | "merchandise"): void {
+    const maxFiles = 5
+    const maxSize = 5 * 1024 * 1024 // 5MB
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"]
+
+    const currentImages = type === "game" ? this.selectedGameImages : this.selectedMerchandiseImages
+
+    if (currentImages.length + files.length > maxFiles) {
+      this.snackBar.open(`Máximo ${maxFiles} imágenes permitidas`, "Cerrar", { duration: 3000 })
+      return
+    }
+
+    Array.from(files).forEach((file) => {
+      if (!allowedTypes.includes(file.type)) {
+        this.snackBar.open(`Tipo de archivo no permitido: ${file.name}`, "Cerrar", { duration: 3000 })
+        return
+      }
+
+      if (file.size > maxSize) {
+        this.snackBar.open(`Archivo muy grande: ${file.name}`, "Cerrar", { duration: 3000 })
+        return
+      }
+
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const imagePreview: ImagePreview = {
+          file: file,
+          preview: e.target?.result as string,
+        }
+
+        if (type === "game") {
+          this.selectedGameImages.push(imagePreview)
+        } else {
+          this.selectedMerchandiseImages.push(imagePreview)
+        }
+      }
+      reader.readAsDataURL(file)
+    })
+  }
+
+  removeGameImage(index: number): void {
+    this.selectedGameImages.splice(index, 1)
+  }
+
+  removeMerchandiseImage(index: number): void {
+    this.selectedMerchandiseImages.splice(index, 1)
+  }
+
+  getImageUrl(imagePath: string): string {
+    if (imagePath.startsWith("http")) {
+      return imagePath
+    }
+    return `${environment.apiUrl.replace("/api", "")}${imagePath}`
   }
 
   loadAllData(): void {
@@ -145,10 +261,16 @@ export class AdminComponent implements OnInit {
   // Create methods
   createGame(): void {
     if (this.gameForm.valid) {
-      this.gameService.createGame(this.gameForm.value).subscribe({
+      const gameData = {
+        ...this.gameForm.value,
+        images: this.selectedGameImages.map((img) => img.file),
+      }
+
+      this.gameService.createGame(gameData).subscribe({
         next: (response) => {
           this.snackBar.open("Juego creado exitosamente", "Cerrar", { duration: 3000 })
           this.gameForm.reset()
+          this.selectedGameImages = []
           this.loadGames()
         },
         error: (error) => {
@@ -195,10 +317,16 @@ export class AdminComponent implements OnInit {
 
   createMerchandise(): void {
     if (this.merchandiseForm.valid) {
-      this.merchandiseService.createMerchandise(this.merchandiseForm.value).subscribe({
+      const merchandiseData = {
+        ...this.merchandiseForm.value,
+        images: this.selectedMerchandiseImages.map((img) => img.file),
+      }
+
+      this.merchandiseService.createMerchandise(merchandiseData).subscribe({
         next: (response) => {
           this.snackBar.open("Producto creado exitosamente", "Cerrar", { duration: 3000 })
           this.merchandiseForm.reset()
+          this.selectedMerchandiseImages = []
           this.loadMerchandise()
         },
         error: (error) => {

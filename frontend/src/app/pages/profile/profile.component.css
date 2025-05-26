@@ -150,6 +150,71 @@
   border-left: 4px solid var(--primary-color);
 }
 
+.item-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item-image.placeholder {
+  background-color: #e0e0e0;
+  color: #999;
+}
+
+.item-image.placeholder mat-icon {
+  font-size: 2rem;
+  width: 2rem;
+  height: 2rem;
+}
+
+.item-details {
+  flex: 1;
+}
+
+.item-details h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--dark-color);
+}
+
+.item-details p {
+  margin: 0 0 0.25rem 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.item-details .description {
+  font-size: 0.8rem;
+  color: #999;
+  line-height: 1.4;
+}
+
+.platforms {
+  display: flex;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.platform-chip {
+  background-color: var(--secondary-color);
+  color: white;
+  font-size: 0.7rem;
+  height: 20px;
+  line-height: 20px;
+}
+
 .empty-state {
   text-align: center;
   padding: 3rem 2rem;
@@ -205,5 +270,16 @@
 
   .tab-content {
     padding: 1rem;
+  }
+
+  .game-item,
+  .merchandise-item {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .item-image {
+    width: 120px;
+    height: 120px;
   }
 }
