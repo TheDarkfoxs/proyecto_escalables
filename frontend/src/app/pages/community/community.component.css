@@ -1,0 +1,198 @@
+.community-page {
+  padding: 2rem 0;
+  min-height: calc(100vh - 200px);
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.page-header h1 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--dark-color);
+  margin-bottom: 0.5rem;
+}
+
+.page-header p {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.actions-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+}
+
+.create-post-card {
+  margin-bottom: 2rem;
+  background-color: #f8f9fa;
+}
+
+.create-post-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.post-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.post-avatar {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.category-chip {
+  background-color: var(--secondary-color);
+  color: white;
+  font-size: 0.8rem;
+}
+
+.post-content {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.tag-chip {
+  background-color: #e3f2fd;
+  color: var(--primary-color);
+  font-size: 0.8rem;
+}
+
+.post-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.like-btn .liked {
+  color: #e91e63;
+}
+
+.comments-section {
+  padding: 1rem;
+  background-color: #f8f9fa;
+}
+
+.comments-list {
+  padding: 1rem 0;
+}
+
+.comment {
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.comment:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.comment-date {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.comment-content {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.view-more-comments {
+  color: var(--primary-color);
+  font-size: 0.9rem;
+}
+
+.add-comment {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.comment-input {
+  flex: 1;
+}
+
+.no-posts {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #666;
+}
+
+.no-posts mat-icon {
+  font-size: 4rem;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 1rem;
+  color: #ccc;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+}
+
+@media (max-width: 768px) {
+  .actions-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters {
+    flex-direction: column;
+  }
+
+  .add-comment {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .page-header h1 {
+    font-size: 2rem;
+  }
+}

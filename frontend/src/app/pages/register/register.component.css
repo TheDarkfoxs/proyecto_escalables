@@ -1,0 +1,107 @@
+.register-page {
+  min-height: calc(100vh - 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 2rem 0;
+}
+
+.register-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.register-card {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+}
+
+.register-header {
+  text-align: center;
+  padding: 2rem 2rem 1rem;
+}
+
+.register-header mat-card-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.register-header mat-card-subtitle {
+  margin-top: 0.5rem;
+  color: #666;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0 2rem;
+}
+
+.name-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.half-width {
+  flex: 1;
+}
+
+.register-btn {
+  height: 48px;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 1rem;
+}
+
+.register-actions {
+  padding: 1rem 2rem 2rem;
+  justify-content: center;
+}
+
+.login-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.login-link span {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+  .register-container {
+    margin: 0 1rem;
+  }
+
+  .name-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .register-form {
+    padding: 0 1rem;
+  }
+
+  .register-header {
+    padding: 1.5rem 1rem 1rem;
+  }
+
+  .register-actions {
+    padding: 1rem 1rem 1.5rem;
+  }
+}

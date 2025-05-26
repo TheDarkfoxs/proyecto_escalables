@@ -1,0 +1,101 @@
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container">
+    <div class="hero-content">
+      <h1 class="hero-title">Bienvenido a Stuffed Entertainment</h1>
+      <p class="hero-subtitle">
+        Descubre los mejores videojuegos y únete a nuestra increíble comunidad de gamers
+      </p>
+      <div class="hero-actions">
+        <a mat-raised-button color="accent" routerLink="/games" class="hero-btn">
+          Explorar Juegos
+        </a>
+        <a mat-stroked-button routerLink="/community" class="hero-btn">
+          Únete a la Comunidad
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Games Section -->
+<section class="featured-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Juegos Destacados</h2>
+      <a mat-button routerLink="/games">Ver todos</a>
+    </div>
+    
+    <div class="loading-spinner" *ngIf="loading">
+      <mat-spinner></mat-spinner>
+    </div>
+    
+    <div class="card-grid" *ngIf="!loading">
+      <app-game-card 
+        *ngFor="let game of featuredGames" 
+        [game]="game">
+      </app-game-card>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Merchandise Section -->
+<section class="featured-section merchandise-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Mercancía Destacada</h2>
+      <a mat-button routerLink="/store">Ver tienda</a>
+    </div>
+    
+    <div class="card-grid" *ngIf="!loading">
+      <mat-card *ngFor="let item of featuredMerchandise" class="merchandise-card">
+        <div class="merchandise-image">
+          <img [src]="item.images?.[0] || '/assets/images/merchandise-placeholder.jpg'" 
+               [alt]="item.name">
+        </div>
+        <mat-card-content>
+          <h3>{{item.name}}</h3>
+          <p>{{item.description | slice:0:80}}...</p>
+          <div class="merchandise-footer">
+            <span class="price">${{item.price}}</span>
+            <button mat-raised-button color="primary">Ver Detalles</button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</section>
+
+<!-- Latest Community Posts -->
+<section class="featured-section community-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Últimas Noticias de la Comunidad</h2>
+      <a mat-button routerLink="/community">Ver comunidad</a>
+    </div>
+    
+    <div class="posts-grid" *ngIf="!loading">
+      <mat-card *ngFor="let post of latestPosts" class="post-card">
+        <mat-card-header>
+          <mat-card-title>{{post.title}}</mat-card-title>
+          <mat-card-subtitle>
+            Por {{post.author.firstName}} {{post.author.lastName}} • 
+            {{post.createdAt | date:'short'}}
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>{{post.content | slice:0:150}}...</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button routerLink="/community">Leer más</button>
+          <span class="post-stats">
+            <mat-icon>favorite</mat-icon>
+            {{post.likes.length}}
+            <mat-icon>comment</mat-icon>
+            {{post.comments.length}}
+          </span>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+</section>

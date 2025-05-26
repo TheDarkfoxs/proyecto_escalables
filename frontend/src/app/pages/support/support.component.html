@@ -1,0 +1,138 @@
+<div class="support-page">
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1>Centro de Soporte</h1>
+      <p>Encuentra respuestas a las preguntas más frecuentes</p>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="filters-section">
+      <mat-card class="filters-card">
+        <mat-card-content>
+          <div class="filters-grid">
+            <mat-form-field appearance="outline" class="search-field">
+              <mat-label>Buscar en soporte</mat-label>
+              <input matInput 
+                     [(ngModel)]="searchTerm" 
+                     (keyup.enter)="onFilterChange()"
+                     placeholder="¿Qué necesitas ayuda?">
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Categoría</mat-label>
+              <mat-select [(ngModel)]="selectedCategory" (selectionChange)="onFilterChange()">
+                <mat-option value="">Todas las categorías</mat-option>
+                <mat-option *ngFor="let category of categories" [value]="category">
+                  {{category}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <button mat-raised-button color="primary" (click)="onFilterChange()">
+              Buscar
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-spinner" *ngIf="loading">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <!-- Support Items -->
+    <div class="support-list" *ngIf="!loading">
+      <mat-accordion>
+        <mat-expansion-panel 
+          *ngFor="let item of supportItems" 
+          class="support-item"
+          [expanded]="isExpanded(item._id!)"
+          (opened)="toggleExpanded(item._id!)"
+          (closed)="toggleExpanded(item._id!)">
+          
+          <mat-expansion-panel-header>
+            <mat-panel-title class="support-title">
+              <mat-icon [style.color]="getCategoryColor(item.category)">
+                {{getCategoryIcon(item.category)}}
+              </mat-icon>
+              <span>{{item.question}}</span>
+            </mat-panel-title>
+            <mat-panel-description>
+              <mat-chip [style.background-color]="getCategoryColor(item.category)" 
+                        [style.color]="'white'">
+                {{item.category}}
+              </mat-chip>
+              <span class="helpful-count">
+                <mat-icon>thumb_up</mat-icon>
+                {{item.helpfulCount}}
+              </span>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div class="support-content">
+            <div class="answer-content" [innerHTML]="item.answer"></div>
+            
+            <div class="support-actions">
+              <button mat-button 
+                      color="primary"
+                      (click)="markHelpful(item._id!)">
+                <mat-icon>thumb_up</mat-icon>
+                ¿Te fue útil?
+              </button>
+              
+              <div class="support-meta">
+                <span>Creado por: {{item.createdBy.username}}</span>
+                <span>{{item.createdAt | date:'medium'}}</span>
+              </div>
+            </div>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+
+    <!-- No Results -->
+    <div class="no-results" *ngIf="!loading && supportItems.length === 0">
+      <mat-icon>help_outline</mat-icon>
+      <h3>No se encontraron resultados</h3>
+      <p>Intenta con otros términos de búsqueda o categorías</p>
+      <button mat-raised-button color="primary" (click)="searchTerm = ''; selectedCategory = ''; onFilterChange()">
+        Ver todas las preguntas
+      </button>
+    </div>
+
+    <!-- Contact Support -->
+    <div class="contact-support">
+      <mat-card class="contact-card">
+        <mat-card-header>
+          <mat-card-title>¿No encontraste lo que buscabas?</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>Nuestro equipo de soporte está aquí para ayudarte</p>
+          <div class="contact-options">
+            <button mat-raised-button color="primary">
+              <mat-icon>email</mat-icon>
+              Enviar Email
+            </button>
+            <button mat-stroked-button color="primary">
+              <mat-icon>chat</mat-icon>
+              Chat en Vivo
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="!loading && supportItems.length > 0 && totalPages > 1">
+      <mat-paginator 
+        [length]="totalPages * 10"
+        [pageSize]="10"
+        [pageIndex]="currentPage - 1"
+        (page)="onPageChange($event.pageIndex + 1)">
+      </mat-paginator>
+    </div>
+  </div>
+</div>

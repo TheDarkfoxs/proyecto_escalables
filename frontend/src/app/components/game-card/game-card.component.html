@@ -1,0 +1,38 @@
+<mat-card class="game-card">
+  <div class="game-image">
+    <img [src]="game.images?.[0] || '/assets/images/game-placeholder.jpg'" 
+         [alt]="game.title" 
+         class="card-image">
+    <div class="game-overlay">
+      <span class="game-genre">{{game.genre}}</span>
+      <span class="game-rating">{{game.rating}}</span>
+    </div>
+  </div>
+  
+  <mat-card-content class="game-content">
+    <h3 class="game-title">{{game.title}}</h3>
+    <p class="game-description">{{game.description | slice:0:100}}...</p>
+    
+    <div class="game-platforms">
+      <mat-chip-listbox>
+        <mat-chip *ngFor="let platform of game.platform">
+          {{platform}}
+        </mat-chip>
+      </mat-chip-listbox>
+    </div>
+    
+    <div class="game-footer">
+      <div class="game-price">
+        <span class="price">${{game.price}}</span>
+      </div>
+      
+      <div class="game-actions">
+        <button mat-raised-button color="primary" 
+                (click)="purchaseGame()" 
+                [disabled]="!isAuthenticated()">
+          {{isAuthenticated() ? 'Comprar' : 'Inicia Sesión'}}
+        </button>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

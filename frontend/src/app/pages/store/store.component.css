@@ -1,0 +1,265 @@
+.store-page {
+  padding: 2rem 0;
+  min-height: calc(100vh - 200px);
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.page-header h1 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--dark-color);
+  margin-bottom: 0.5rem;
+}
+
+.page-header p {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.filters-section {
+  margin-bottom: 2rem;
+}
+
+.filters-card {
+  background-color: #f8f9fa;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: 1rem;
+  align-items: end;
+}
+
+.search-field {
+  min-width: 300px;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.merchandise-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.merchandise-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.merchandise-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.merchandise-image {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.merchandise-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.out-of-stock {
+  background-color: var(--danger-color);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.merchandise-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.merchandise-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--dark-color);
+}
+
+.merchandise-description {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+  flex: 1;
+}
+
+.merchandise-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.category-chip {
+  background-color: var(--secondary-color);
+  color: white;
+  font-size: 0.8rem;
+}
+
+.stock-info {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.low-stock {
+  color: var(--warning-color);
+  font-weight: 500;
+}
+
+.merchandise-sizes,
+.merchandise-colors {
+  margin-bottom: 1rem;
+}
+
+.sizes-label,
+.colors-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--dark-color);
+  margin-right: 0.5rem;
+}
+
+.merchandise-sizes mat-chip {
+  font-size: 0.8rem;
+  margin-right: 0.25rem;
+}
+
+.color-options {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.color-option {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.color-option:hover {
+  transform: scale(1.1);
+}
+
+.merchandise-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.merchandise-actions button {
+  min-width: 100px;
+}
+
+.no-results {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #666;
+}
+
+.no-results mat-icon {
+  font-size: 4rem;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 1rem;
+  color: #ccc;
+}
+
+.no-results h3 {
+  margin-bottom: 0.5rem;
+  color: var(--dark-color);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .filters-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .search-field {
+    grid-column: 1 / -1;
+    min-width: auto;
+  }
+
+  .filter-actions {
+    grid-column: 1 / -1;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .merchandise-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .merchandise-footer {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .merchandise-actions {
+    width: 100%;
+  }
+
+  .merchandise-actions button {
+    width: 100%;
+  }
+
+  .page-header h1 {
+    font-size: 2rem;
+  }
+}

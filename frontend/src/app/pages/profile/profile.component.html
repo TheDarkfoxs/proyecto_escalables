@@ -1,0 +1,185 @@
+<div class="profile-page">
+  <div class="container">
+    <!-- Loading -->
+    <div class="loading-spinner" *ngIf="loading">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <!-- Profile Content -->
+    <div class="profile-content" *ngIf="!loading && user">
+      <!-- Profile Header -->
+      <div class="profile-header">
+        <div class="profile-avatar">
+          <mat-icon>account_circle</mat-icon>
+        </div>
+        <div class="profile-info">
+          <h1>{{user.firstName}} {{user.lastName}}</h1>
+          <p class="username">@{{user.username}}</p>
+          <mat-chip [class]="'role-' + user.role">{{user.role}}</mat-chip>
+        </div>
+      </div>
+
+      <!-- Profile Tabs -->
+      <mat-tab-group [(selectedIndex)]="activeTab" class="profile-tabs">
+        <!-- Personal Information Tab -->
+        <mat-tab label="Información Personal">
+          <div class="tab-content">
+            <mat-card class="info-card">
+              <mat-card-header>
+                <mat-card-title>Editar Perfil</mat-card-title>
+                <mat-card-subtitle>Actualiza tu información personal</mat-card-subtitle>
+              </mat-card-header>
+              
+              <mat-card-content>
+                <form [formGroup]="profileForm" (ngSubmit)="updateProfile()" class="profile-form">
+                  <div class="form-row">
+                    <mat-form-field appearance="outline" class="half-width">
+                      <mat-label>Nombre</mat-label>
+                      <input matInput formControlName="firstName">
+                      <mat-error *ngIf="profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched">
+                        {{getErrorMessage('firstName')}}
+                      </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="half-width">
+                      <mat-label>Apellido</mat-label>
+                      <input matInput formControlName="lastName">
+                      <mat-error *ngIf="profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched">
+                        {{getErrorMessage('lastName')}}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Usuario</mat-label>
+                    <input matInput formControlName="username">
+                    <mat-error *ngIf="profileForm.get('username')?.invalid && profileForm.get('username')?.touched">
+                      {{getErrorMessage('username')}}
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Email</mat-label>
+                    <input matInput type="email" formControlName="email">
+                    <mat-error *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">
+                      {{getErrorMessage('email')}}
+                    </mat-error>
+                  </mat-form-field>
+
+                  <div class="form-actions">
+                    <button mat-raised-button 
+                            color="primary" 
+                            type="submit"
+                            [disabled]="profileForm.invalid || updating">
+                      <mat-spinner diameter="20" *ngIf="updating"></mat-spinner>
+                      <span *ngIf="!updating">Actualizar Perfil</span>
+                    </button>
+                  </div>
+                </form>
+              </mat-card-content>
+            </mat-card>
+
+            <!-- Account Details -->
+            <mat-card class="details-card">
+              <mat-card-header>
+                <mat-card-title>Detalles de la Cuenta</mat-card-title>
+              </mat-card-header>
+              
+              <mat-card-content>
+                <div class="details-grid">
+                  <div class="detail-item">
+                    <span class="detail-label">Fecha de Registro:</span>
+                    <span class="detail-value">{{formatDate(user.createdAt)}}</span>
+                  </div>
+                  
+                  <div class="detail-item">
+                    <span class="detail-label">Última Actualización:</span>
+                    <span class="detail-value">{{formatDate(user.updatedAt)}}</span>
+                  </div>
+                  
+                  <div class="detail-item">
+                    <span class="detail-label">Estado de la Cuenta:</span>
+                    <mat-chip [class]="user.isActive ? 'status-active' : 'status-inactive'">
+                      {{user.isActive ? 'Activa' : 'Inactiva'}}
+                    </mat-chip>
+                  </div>
+                  
+                  <div class="detail-item">
+                    <span class="detail-label">Rol:</span>
+                    <mat-chip [class]="'role-' + user.role">
+                      {{user.role === 'admin' ? 'Administrador' : 'Usuario'}}
+                    </mat-chip>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-tab>
+
+        <!-- Purchased Games Tab -->
+        <mat-tab label="Mis Juegos">
+          <div class="tab-content">
+            <mat-card class="games-card">
+              <mat-card-header>
+                <mat-card-title>Juegos Comprados</mat-card-title>
+                <mat-card-subtitle>
+                  Total: {{user.purchasedGames?.length || 0}} juegos
+                </mat-card-subtitle>
+              </mat-card-header>
+              
+              <mat-card-content>
+                <div class="games-list" *ngIf="user.purchasedGames && user.purchasedGames.length > 0">
+                  <div *ngFor="let game of user.purchasedGames" class="game-item">
+                    <mat-icon>videogame_asset</mat-icon>
+                    <span>{{game}}</span>
+                  </div>
+                </div>
+                
+                <div class="empty-state" *ngIf="!user.purchasedGames || user.purchasedGames.length === 0">
+                  <mat-icon>videogame_asset_off</mat-icon>
+                  <h3>No has comprado juegos aún</h3>
+                  <p>Explora nuestro catálogo y encuentra tu próximo juego favorito</p>
+                  <button mat-raised-button color="primary" routerLink="/games">
+                    Ver Juegos
+                  </button>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-tab>
+
+        <!-- Purchased Merchandise Tab -->
+        <mat-tab label="Mis Compras">
+          <div class="tab-content">
+            <mat-card class="merchandise-card">
+              <mat-card-header>
+                <mat-card-title>Mercancía Comprada</mat-card-title>
+                <mat-card-subtitle>
+                  Total: {{user.purchasedMerchandise?.length || 0}} productos
+                </mat-card-subtitle>
+              </mat-card-header>
+              
+              <mat-card-content>
+                <div class="merchandise-list" *ngIf="user.purchasedMerchandise && user.purchasedMerchandise.length > 0">
+                  <div *ngFor="let item of user.purchasedMerchandise" class="merchandise-item">
+                    <mat-icon>shopping_bag</mat-icon>
+                    <span>{{item}}</span>
+                  </div>
+                </div>
+                
+                <div class="empty-state" *ngIf="!user.purchasedMerchandise || user.purchasedMerchandise.length === 0">
+                  <mat-icon>shopping_bag</mat-icon>
+                  <h3>No has comprado productos aún</h3>
+                  <p>Visita nuestra tienda oficial y encuentra productos exclusivos</p>
+                  <button mat-raised-button color="primary" routerLink="/store">
+                    Ver Tienda
+                  </button>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </div>
+</div>

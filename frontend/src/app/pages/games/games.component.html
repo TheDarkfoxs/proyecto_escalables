@@ -1,0 +1,94 @@
+<div class="games-page">
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1>Catálogo de Juegos</h1>
+      <p>Descubre nuestra increíble colección de videojuegos</p>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="filters-section">
+      <mat-card class="filters-card">
+        <mat-card-content>
+          <div class="filters-grid">
+            <!-- Search -->
+            <mat-form-field appearance="outline" class="search-field">
+              <mat-label>Buscar juegos</mat-label>
+              <input matInput 
+                     [(ngModel)]="searchTerm" 
+                     (keyup.enter)="onSearch()"
+                     placeholder="Título del juego...">
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+
+            <!-- Genre Filter -->
+            <mat-form-field appearance="outline">
+              <mat-label>Género</mat-label>
+              <mat-select [(ngModel)]="selectedGenre" (selectionChange)="onFilterChange()">
+                <mat-option value="">Todos los géneros</mat-option>
+                <mat-option *ngFor="let genre of genres" [value]="genre">
+                  {{genre}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Platform Filter -->
+            <mat-form-field appearance="outline">
+              <mat-label>Plataforma</mat-label>
+              <mat-select [(ngModel)]="selectedPlatform" (selectionChange)="onFilterChange()">
+                <mat-option value="">Todas las plataformas</mat-option>
+                <mat-option *ngFor="let platform of platforms" [value]="platform">
+                  {{platform}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Action Buttons -->
+            <div class="filter-actions">
+              <button mat-raised-button color="primary" (click)="onSearch()">
+                Buscar
+              </button>
+              <button mat-button (click)="clearFilters()">
+                Limpiar Filtros
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" *ngIf="loading">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <!-- Games Grid -->
+    <div class="games-grid" *ngIf="!loading">
+      <app-game-card 
+        *ngFor="let game of games" 
+        [game]="game">
+      </app-game-card>
+    </div>
+
+    <!-- No Results -->
+    <div class="no-results" *ngIf="!loading && games.length === 0">
+      <mat-icon>videogame_asset_off</mat-icon>
+      <h3>No se encontraron juegos</h3>
+      <p>Intenta ajustar tus filtros de búsqueda</p>
+      <button mat-raised-button color="primary" (click)="clearFilters()">
+        Ver todos los juegos
+      </button>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="!loading && games.length > 0 && totalPages > 1">
+      <mat-paginator 
+        [length]="totalPages * 12"
+        [pageSize]="12"
+        [pageIndex]="currentPage - 1"
+        (page)="onPageChange($event.pageIndex + 1)"
+        showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+</div>

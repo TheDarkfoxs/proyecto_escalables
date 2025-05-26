@@ -1,0 +1,138 @@
+<div class="store-page">
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1>Tienda Oficial</h1>
+      <p>Descubre productos exclusivos de Stuffed Entertainment</p>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="filters-section">
+      <mat-card class="filters-card">
+        <mat-card-content>
+          <div class="filters-grid">
+            <!-- Search -->
+            <mat-form-field appearance="outline" class="search-field">
+              <mat-label>Buscar productos</mat-label>
+              <input matInput 
+                     [(ngModel)]="searchTerm" 
+                     (keyup.enter)="onSearch()"
+                     placeholder="Nombre del producto...">
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+
+            <!-- Category Filter -->
+            <mat-form-field appearance="outline">
+              <mat-label>Categoría</mat-label>
+              <mat-select [(ngModel)]="selectedCategory" (selectionChange)="onFilterChange()">
+                <mat-option value="">Todas las categorías</mat-option>
+                <mat-option *ngFor="let category of categories" [value]="category">
+                  {{category}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Action Buttons -->
+            <div class="filter-actions">
+              <button mat-raised-button color="primary" (click)="onSearch()">
+                Buscar
+              </button>
+              <button mat-button (click)="clearFilters()">
+                Limpiar Filtros
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" *ngIf="loading">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <!-- Merchandise Grid -->
+    <div class="merchandise-grid" *ngIf="!loading">
+      <mat-card *ngFor="let item of merchandise" class="merchandise-card">
+        <div class="merchandise-image">
+          <img [src]="item.images?.[0] || '/assets/images/merchandise-placeholder.jpg'" 
+               [alt]="item.name" 
+               class="card-image">
+          <div class="merchandise-overlay" *ngIf="item.stock === 0">
+            <span class="out-of-stock">Agotado</span>
+          </div>
+        </div>
+        
+        <mat-card-content class="merchandise-content">
+          <h3 class="merchandise-title">{{item.name}}</h3>
+          <p class="merchandise-description">{{item.description | slice:0:100}}...</p>
+          
+          <div class="merchandise-details">
+            <mat-chip class="category-chip">{{item.category}}</mat-chip>
+            <span class="stock-info" [class.low-stock]="item.stock < 5 && item.stock > 0">
+              Stock: {{item.stock}}
+            </span>
+          </div>
+
+          <!-- Sizes -->
+          <div class="merchandise-sizes" *ngIf="item.sizes.length > 0">
+            <span class="sizes-label">Tallas:</span>
+            <mat-chip-listbox>
+              <mat-chip *ngFor="let size of item.sizes">
+                {{size}}
+              </mat-chip>
+            </mat-chip-listbox>
+          </div>
+
+          <!-- Colors -->
+          <div class="merchandise-colors" *ngIf="item.colors.length > 0">
+            <span class="colors-label">Colores:</span>
+            <div class="color-options">
+              <div *ngFor="let color of item.colors" 
+                   class="color-option"
+                   [style.background-color]="color.toLowerCase()"
+                   [title]="color">
+              </div>
+            </div>
+          </div>
+          
+          <div class="merchandise-footer">
+            <div class="merchandise-price">
+              <span class="price">${{item.price}}</span>
+            </div>
+            
+            <div class="merchandise-actions">
+              <button mat-raised-button 
+                      color="primary" 
+                      (click)="purchaseMerchandise(item._id!)" 
+                      [disabled]="!isAuthenticated() || item.stock === 0">
+                {{!isAuthenticated() ? 'Inicia Sesión' : item.stock === 0 ? 'Agotado' : 'Comprar'}}
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- No Results -->
+    <div class="no-results" *ngIf="!loading && merchandise.length === 0">
+      <mat-icon>shopping_bag</mat-icon>
+      <h3>No se encontraron productos</h3>
+      <p>Intenta ajustar tus filtros de búsqueda</p>
+      <button mat-raised-button color="primary" (click)="clearFilters()">
+        Ver todos los productos
+      </button>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="!loading && merchandise.length > 0 && totalPages > 1">
+      <mat-paginator 
+        [length]="totalPages * 12"
+        [pageSize]="12"
+        [pageIndex]="currentPage - 1"
+        (page)="onPageChange($event.pageIndex + 1)"
+        showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+</div>

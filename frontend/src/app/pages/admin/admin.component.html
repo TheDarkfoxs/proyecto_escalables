@@ -1,0 +1,356 @@
+<div class="admin-page">
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1>Panel de Administración</h1>
+      <p>Gestiona todos los aspectos de Stuffed Entertainment</p>
+    </div>
+
+    <!-- Admin Tabs -->
+    <mat-tab-group [(selectedIndex)]="activeTab" class="admin-tabs">
+      <!-- Games Management -->
+      <mat-tab label="Juegos">
+        <div class="tab-content">
+          <div class="admin-section">
+            <h2>Crear Nuevo Juego</h2>
+            <mat-card class="form-card">
+              <mat-card-content>
+                <form [formGroup]="gameForm" (ngSubmit)="createGame()" class="admin-form">
+                  <div class="form-row">
+                    <mat-form-field appearance="outline" class="half-width">
+                      <mat-label>Título</mat-label>
+                      <input matInput formControlName="title">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="half-width">
+                      <mat-label>Precio</mat-label>
+                      <input matInput type="number" formControlName="price">
+                    </mat-form-field>
+                  </div>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Descripción</mat-label>
+                    <textarea matInput formControlName="description" rows="3"></textarea>
+                  </mat-form-field>
+
+                  <div class="form-row">
+                    <mat-form-field appearance="outline" class="third-width">
+                      <mat-label>Género</mat-label>
+                      <mat-select formControlName="genre">
+                        <mat-option *ngFor="let genre of gameGenres" [value]="genre">
+                          {{genre}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="third-width">
+                      <mat-label>Plataformas</mat-label>
+                      <mat-select formControlName="platform" multiple>
+                        <mat-option *ngFor="let platform of gamePlatforms" [value]="platform">
+                          {{platform}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="third-width">
+                      <mat-label>Clasificación</mat-label>
+                      <mat-select formControlName="rating">
+                        <mat-option *ngFor="let rating of gameRatings" [value]="rating">
+                          {{rating}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+
+                  <div class="form-row">
+                    <mat-form-field appearance="outline" class="half-width">
+                      <mat-label>Fecha de Lanzamiento</mat-label>
+                      <input matInput type="date" formControlName="releaseDate">
+                    </mat-form-field>
+
+                    <div class="checkbox-group">
+                      <mat-checkbox formControlName="featured">Destacado</mat-checkbox>
+                    </div>
+                  </div>
+
+                  <div class="form-actions">
+                    <button mat-raised-button color="primary" type="submit" [disabled]="gameForm.invalid">
+                      Crear Juego
+                    </button>
+                  </div>
+                </form>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <!-- Games List -->
+          <div class="admin-section">
+            <h2>Juegos Existentes</h2>
+            <mat-card class="list-card">
+              <mat-card-content>
+                <div class="items-list">
+                  <div *ngFor="let game of games" class="list-item">
+                    <div class="item-info">
+                      <h4>{{game.title}}</h4>
+                      <p>{{game.genre}} - ${{game.price}}</p>
+                      <mat-chip *ngIf="game.featured" class="featured-chip">Destacado</mat-chip>
+                    </div>
+                    <div class="item-actions">
+                      <button mat-icon-button color="warn" (click)="deleteGame(game._id)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Posts Management -->
+      <mat-tab label="Posts">
+        <div class="tab-content">
+          <div class="admin-section">
+            <h2>Crear Nuevo Post</h2>
+            <mat-card class="form-card">
+              <mat-card-content>
+                <form [formGroup]="postForm" (ngSubmit)="createPost()" class="admin-form">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Título</mat-label>
+                    <input matInput formControlName="title">
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Contenido</mat-label>
+                    <textarea matInput formControlName="content" rows="5"></textarea>
+                  </mat-form-field>
+
+                  <div class="form-row">
+                    <mat-form-field appearance="outline" class="half-width">
+                      <mat-label>Categoría</mat-label>
+                      <mat-select formControlName="category">
+                        <mat-option *ngFor="let category of postCategories" [value]="category">
+                          {{category}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="half-width">
+                      <mat-label>Tags (separados por comas)</mat-label>
+                      <input matInput formControlName="tags">
+                    </mat-form-field>
+                  </div>
+
+                  <div class="checkbox-group">
+                    <mat-checkbox formControlName="featured">Destacado</mat-checkbox>
+                  </div>
+
+                  <div class="form-actions">
+                    <button mat-raised-button color="primary" type="submit" [disabled]="postForm.invalid">
+                      Crear Post
+                    </button>
+                  </div>
+                </form>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <!-- Posts List -->
+          <div class="admin-section">
+            <h2>Posts Existentes</h2>
+            <mat-card class="list-card">
+              <mat-card-content>
+                <div class="items-list">
+                  <div *ngFor="let post of posts" class="list-item">
+                    <div class="item-info">
+                      <h4>{{post.title}}</h4>
+                      <p>{{post.category}} - {{post.createdAt | date:'short'}}</p>
+                      <mat-chip *ngIf="post.featured" class="featured-chip">Destacado</mat-chip>
+                    </div>
+                    <div class="item-actions">
+                      <button mat-icon-button color="warn" (click)="deletePost(post._id)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Support Management -->
+      <mat-tab label="Soporte">
+        <div class="tab-content">
+          <div class="admin-section">
+            <h2>Crear Artículo de Soporte</h2>
+            <mat-card class="form-card">
+              <mat-card-content>
+                <form [formGroup]="supportForm" (ngSubmit)="createSupport()" class="admin-form">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Pregunta</mat-label>
+                    <input matInput formControlName="question">
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Respuesta</mat-label>
+                    <textarea matInput formControlName="answer" rows="5"></textarea>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Categoría</mat-label>
+                    <mat-select formControlName="category">
+                      <mat-option *ngFor="let category of supportCategories" [value]="category">
+                        {{category}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <div class="form-actions">
+                    <button mat-raised-button color="primary" type="submit" [disabled]="supportForm.invalid">
+                      Crear Artículo
+                    </button>
+                  </div>
+                </form>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <!-- Support List -->
+          <div class="admin-section">
+            <h2>Artículos de Soporte</h2>
+            <mat-card class="list-card">
+              <mat-card-content>
+                <div class="items-list">
+                  <div *ngFor="let item of supportItems" class="list-item">
+                    <div class="item-info">
+                      <h4>{{item.question}}</h4>
+                      <p>{{item.category}} - {{item.helpfulCount}} útiles</p>
+                    </div>
+                    <div class="item-actions">
+                      <button mat-icon-button color="warn" (click)="deleteSupport(item._id)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Merchandise Management -->
+      <mat-tab label="Mercancía">
+        <div class="tab-content">
+          <div class="admin-section">
+            <h2>Crear Nuevo Producto</h2>
+            <mat-card class="form-card">
+              <mat-card-content>
+                <form [formGroup]="merchandiseForm" (ngSubmit)="createMerchandise()" class="admin-form">
+                  <div class="form-row">
+                    <mat-form-field appearance="outline" class="half-width">
+                      <mat-label>Nombre</mat-label>
+                      <input matInput formControlName="name">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="half-width">
+                      <mat-label>Precio</mat-label>
+                      <input matInput type="number" formControlName="price">
+                    </mat-form-field>
+                  </div>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Descripción</mat-label>
+                    <textarea matInput formControlName="description" rows="3"></textarea>
+                  </mat-form-field>
+
+                  <div class="form-row">
+                    <mat-form-field appearance="outline" class="half-width">
+                      <mat-label>Categoría</mat-label>
+                      <mat-select formControlName="category">
+                        <mat-option *ngFor="let category of merchandiseCategories" [value]="category">
+                          {{category}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="half-width">
+                      <mat-label>Stock</mat-label>
+                      <input matInput type="number" formControlName="stock">
+                    </mat-form-field>
+                  </div>
+
+                  <div class="checkbox-group">
+                    <mat-checkbox formControlName="featured">Destacado</mat-checkbox>
+                  </div>
+
+                  <div class="form-actions">
+                    <button mat-raised-button color="primary" type="submit" [disabled]="merchandiseForm.invalid">
+                      Crear Producto
+                    </button>
+                  </div>
+                </form>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <!-- Merchandise List -->
+          <div class="admin-section">
+            <h2>Productos Existentes</h2>
+            <mat-card class="list-card">
+              <mat-card-content>
+                <div class="items-list">
+                  <div *ngFor="let item of merchandise" class="list-item">
+                    <div class="item-info">
+                      <h4>{{item.name}}</h4>
+                      <p>{{item.category}} - ${{item.price}} - Stock: {{item.stock}}</p>
+                      <mat-chip *ngIf="item.featured" class="featured-chip">Destacado</mat-chip>
+                    </div>
+                    <div class="item-actions">
+                      <button mat-icon-button color="warn" (click)="deleteMerchandise(item._id)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Users Management -->
+      <mat-tab label="Usuarios">
+        <div class="tab-content">
+          <div class="admin-section">
+            <h2>Gestión de Usuarios</h2>
+            <mat-card class="list-card">
+              <mat-card-content>
+                <div class="items-list">
+                  <div *ngFor="let user of users" class="list-item">
+                    <div class="item-info">
+                      <h4>{{user.firstName}} {{user.lastName}}</h4>
+                      <p>@{{user.username}} - {{user.email}}</p>
+                      <mat-chip [class]="'role-' + user.role">{{user.role}}</mat-chip>
+                      <mat-chip [class]="user.isActive ? 'status-active' : 'status-inactive'">
+                        {{user.isActive ? 'Activo' : 'Inactivo'}}
+                      </mat-chip>
+                    </div>
+                    <div class="item-actions" *ngIf="user.role !== 'admin'">
+                      <button mat-icon-button color="warn" (click)="deleteUser(user._id)">
+                        <mat-icon>block</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>
